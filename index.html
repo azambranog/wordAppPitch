@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  
+<html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<title>A Basic Phrase Completion App</title>
+	<meta name="description" content="A Basic Phrase Completion App">
+	<meta name="author" content="A. Zambrano">
+	<meta name="generator" content="slidify" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=1024, user-scalable=no">
+	
+	<!-- Required stylesheet -->
+	<link rel="stylesheet" href="libraries/frameworks/deckjs/core/deck.core.css">
+	<link rel="stylesheet" href="libraries/frameworks/deckjs/extensions/goto/deck.goto.css">
+<link rel="stylesheet" href="libraries/frameworks/deckjs/extensions/hash/deck.hash.css">
+<link rel="stylesheet" href="libraries/frameworks/deckjs/extensions/menu/deck.menu.css">
+<link rel="stylesheet" href="libraries/frameworks/deckjs/extensions/navigation/deck.navigation.css">
+<link rel="stylesheet" href="libraries/frameworks/deckjs/extensions/scale/deck.scale.css">
+<link rel="stylesheet" href="libraries/frameworks/deckjs/extensions/status/deck.status.css">
+<!-- Style theme. More available in /themes/style/  -->
+	<link rel="stylesheet" href="libraries/frameworks/deckjs/themes/style/swiss.css">
+	
+	<!-- Transition theme. More available in /themes/transition/  -->
+	<link rel="stylesheet" href="libraries/frameworks/deckjs/themes/transition/horizontal-slide.css">
+	<script src="libraries/frameworks/deckjs/modernizr.custom.js"></script>
+	
+	<!-- LOAD STYLE SHEETS -->
+	<link rel="stylesheet" href="libraries/highlighters/prettify/css/tomorrow.css">
+	
+	  
+</head>
+
+<body class="deck-container">
+
+  <!-- Begin slides -->
+  <section class="slide " id="slide-1">
+  <h1>A Basic Phrase Completion App.</h1>
+  <h3>Project for Data mining Specialization</h3> 
+
+<h5>By: A. Zambrano (azambranog)</h5>
+
+</section>
+<section class="slide " id="slide-2">
+  <h2>Motivation</h2>
+  <ol>
+<li>We use word predictors very often in our everyday online activities.</li>
+<li>Web search engines, shopping websites, social media, phone texting aapps. All of these have often word prediction algorithms embeded.</li>
+<li>In the particular case of smartphones, the algorithmns run in a more limited capacity than on webservers. This requires good and compact models.</li>
+<li>Use publicaly available data (from twitter, blog entries and news) to model simple word predictors.</li>
+</ol>
+
+</section>
+<section class="slide " id="slide-3">
+  <h2>Model</h2>
+  <ul>
+<li>The model is based on a small selection of twitter, blogs and news text.</li>
+<li>We found frequency of words, 2-grams, 3-grams and 4-grams, and transform them to probabilities</li>
+<li>For each 4-gram we calculate a robability value (p2) based in all the other n-grams probablities (p). For example, for the 4-gram &quot;A B C D&quot;:</li>
+</ul>
+
+<pre><code class="r">p2(&quot;A B C D&quot;) = 60*p(&quot;A B C D&quot;) + 25*p(&quot;B C D&quot;) + 10*p(&quot;C D&quot;) + 5*p(&quot;D&quot;)
+</code></pre>
+
+<ul>
+<li>this p2 value was stored in a very large table. Because the shiniapps.io website has limited ammount of memory, we had to shorten the table significantly. We remove terms with smallest p2 values. This caused a sifnificant lost in precission</li>
+</ul>
+
+</section>
+<section class="slide " id="slide-4">
+  <h2>How does the app use the model?</h2>
+  <ol>
+<li>The app reads the input and cleans symbols, filters profanities, removes extra spaces, lowercase, etc.</li>
+<li>Search on the table for possible endings, beacuse the input might not appear in the 4-gram table exactly, we create a method that tries to find the best possibility even if the exact phrase is not found. For example, if your phrase is &quot;I go to the...&quot;, for each ending &quot;YY&quot; we calculate:</li>
+</ol>
+
+<pre><code class="r">p(&quot;YY&quot;) = w1*p(&quot;go to the YY&quot;) + w2*sum(p(&quot;X to the YY&quot;)) + w3*sum(p(&quot;X X the YY&quot;)) + w4*sum(p(&quot;go to X YY&quot;)) + w5*sum(p(&quot;X to X YY&quot;)) + w5*sum(p(&quot;X X the YY&quot;)) + w5*sum(p(&quot;go X the YY&quot;)).....
+</code></pre>
+
+<p>where  X is any word and wn are wheights calculated experimentally</p>
+
+</section>
+<section class="slide " id="slide-5">
+  <h2>App instructions</h2>
+  <p><img src="app1.png" alt="Appimage"></p>
+
+<ul>
+<li><p>Wait for the app to load, it will take several seconds, you will know when the app is loaded because you will see the message: THE DATA IS LOADED NOW, YOU CAN START PALYING.. your first prediction might take some secons too.</p></li>
+<li><p>Just type a phrase and then click on predict, you will get an ending, a list of other 5 possible words and a nice wordcloud with more possible words.
+The app can be found in <a href="http://azambranog.shinyapps.io/wordApp/">my shiny apps webpage</a></p></li>
+</ul>
+
+</section>
+</body>
+  <!-- deck.navigation snippet -->
+  <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+  <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+  
+  <!-- deck.status snippet -->
+  <p class="deck-status">
+  <span class="deck-status-current"></span>
+    /
+  <span class="deck-status-total"></span>
+  </p>
+  
+  <!-- deck.goto snippet -->
+  <form action="." method="get" class="goto-form">
+  	<label for="goto-slide">Go to slide:</label>
+  	<input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+  	<datalist id="goto-datalist"></datalist>
+  	<input type="submit" value="Go">
+  </form>
+  
+  <!-- deck.hash snippet -->
+  <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+  
+  
+  <!-- Grab CDN jQuery, with a protocol relative URL; fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/frameworks/deckjs/jquery-1.7.min.js"><\/script>')</script>
+  
+  <!-- Add Slide Class to Build Elements -->
+  <script type='text/javascript'>
+  $('ol.build li').addClass('slide')
+  $('ul.build li').addClass('slide')
+  </script>
+  
+  <!-- Deck Core and extensions -->
+  <script src="libraries/frameworks/deckjs/core/deck.core.js"></script>
+  <script src="libraries/frameworks/deckjs/extensions/goto/deck.goto.js"></script>
+<script src="libraries/frameworks/deckjs/extensions/hash/deck.hash.js"></script>
+<script src="libraries/frameworks/deckjs/extensions/menu/deck.menu.js"></script>
+<script src="libraries/frameworks/deckjs/extensions/navigation/deck.navigation.js"></script>
+<script src="libraries/frameworks/deckjs/extensions/scale/deck.scale.js"></script>
+<script src="libraries/frameworks/deckjs/extensions/status/deck.status.js"></script>
+<!-- Initialize the deck -->
+  <script>
+  $(function() {
+  	$.deck('.slide');
+  });
+  </script>  <!-- Google Prettify -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+<script src='libraries/highlighters/prettify/js/lang-r.js'></script>
+<script>
+  var pres = document.getElementsByTagName("pre");
+  for (var i=0; i < pres.length; ++i) {
+    pres[i].className = "prettyprint linenums";
+  }
+  prettyPrint();
+</script>
+<!-- End Google Prettify --> 
+
+</html>
